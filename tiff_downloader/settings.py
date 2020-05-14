@@ -12,7 +12,9 @@ DATAVERSE_URL = os.environ.get('DATAVERSE_URL')
 DATAVERSE_API_TOKEN = os.environ.get('DATAVERSE_API_TOKEN', None)
 
 TIFF_SERVER_ROOT = os.path.join(APP_DIR, os.environ.get('TIFF_SERVER_ROOT'))
+# creates path if it doesn't exists
 Path(TIFF_SERVER_ROOT).mkdir(parents=True, exist_ok=True)
 
 TEMP_DIR = os.path.join(APP_DIR, os.environ.get('TEMP_DIR', tempfile.gettempdir()))
+# creates path if it doesn't exists
 Path(TEMP_DIR).mkdir(parents=True, exist_ok=True)
