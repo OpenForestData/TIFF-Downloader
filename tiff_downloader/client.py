@@ -5,15 +5,6 @@ from pathlib import Path
 from pyDataverse.api import Api
 
 
-class CustomAPI(Api):
-    class Fake_response:
-        text = '{"dataset_persistent_id": "doi:10.5072/FK2/XLBADV"}'
-        status_code = 200
-
-    def get_datafile_metadata(self, identifier):
-        return self.Fake_response()
-
-
 class DataverseFileClient:
     CHUNK_SIZE = 2048
 

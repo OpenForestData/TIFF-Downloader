@@ -2,6 +2,19 @@ import falcon
 
 
 def required_params(*required_params):
+    """
+    Decorator for .on_get() methods that makes given query parameters obligatory.
+
+    Parameters
+    ----------
+    required_params: list of params that have to be included in request query
+
+    Returns
+    -------
+    Decorated function
+
+    """
+
     def hook(req, resp, resource, params):
         missing_params = []
         for required_param in required_params:

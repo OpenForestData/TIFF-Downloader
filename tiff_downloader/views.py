@@ -12,8 +12,20 @@ from tiff_downloader.hooks import required_params
 
 
 class Uploader:
+    """
+    Uploader transfers given TIFF files from Dataverse instance to designated directory. During this process
+    file is being converted to Tiled Multi-Resolution (or Tiled Pyramidal) TIFF.
+    """
 
     def __init__(self, dataverse_client):
+        """
+        Init function allows to use different dataverse client
+
+        Parameters
+        ----------
+        dataverse_client: client object providing based on pyDataverse .get_dataset() method, native_api_base_url
+        and api_token fields.
+        """
         self.dataverse_client = dataverse_client
 
     @falcon.before(required_params('file_id', 'dataset_pid'))
@@ -43,4 +55,4 @@ class Uploader:
                      tile_height=512)
 
         shutil.rmtree(os.path.dirname(tmp_filepath))
-        resp.body = filepath
+        resp.body = json.dumps({'filepath': filepath})
