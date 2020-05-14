@@ -6,3 +6,4 @@ tiff_downloder/
 .idea
 
 *.pyc
+__pycache__
