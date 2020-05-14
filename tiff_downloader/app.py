@@ -1,5 +1,4 @@
 import falcon
-# from pyDataverse.api import Api
 
 from . import settings
 from .client import CustomAPI
