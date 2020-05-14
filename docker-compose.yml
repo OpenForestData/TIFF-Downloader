@@ -2,10 +2,7 @@ version: "3.7"
 services:
 
     tiff_downloader:
-        build: 
-            context: .
-            dockerfile: Dockerfile
-        image: tiff_downloader
+        image: "registry.gitlab.whiteaster.com/openforestdata/backend/tiff-downloader:master"
         container_name: tiff_downloader
         restart: unless-stopped
         environment: 
