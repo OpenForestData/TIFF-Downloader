@@ -1,0 +1,6 @@
+falcon==2.0.0
+gunicorn==20.0.4
+
+pyDataverse@ git+https://gitlab.whiteaster.com/openforestdata/backend/pydataverse-upgrade.git
+python-dotenv==0.13.0
+
