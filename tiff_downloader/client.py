@@ -28,7 +28,10 @@ class DataverseFileClient:
 
         stream = requests.get(file_url, params=params, stream=True)
 
-        Path(os.path.dirname(destination)).mkdir(parents=True, exist_ok=True)
+        path = Path(os.path.dirname(destination)).mkdir(parents=True, exist_ok=True)
         with self.file_open(destination, 'wb') as file:
             for chunk in stream.iter_content(self.CHUNK_SIZE):
                 file.write(chunk)
+
+        return path
+

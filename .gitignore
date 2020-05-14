@@ -2,3 +2,5 @@ venv/
 tmp/
 .env
 .idea
+
+*.pyc
