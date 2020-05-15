@@ -38,7 +38,7 @@ class DataverseFileClient:
         file_url = self.url + query_str
 
         # get response as stream
-        stream = requests.get(file_url, params=params, stream=True)
+        stream = requests.get(file_url, params=params, stream=True, verify=False)
 
         # creates destination path if it doesn't exists
         Path(os.path.dirname(destination)).mkdir(parents=True, exist_ok=True)
