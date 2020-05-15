@@ -1,18 +1,66 @@
 version: "3.7"
 services:
 
+    tiff_traefik:
+        image: "traefik:v2.2"
+        container_name: "tiff_traefik"
+        restart: unless-stopped
+        command:
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=true"
+            - "--api.insecure=true"
+            - "--entrypoints.web.address=:80"
+            - "--entrypoints.web.forwardedheaders.insecure"
+            - "--entrypoints.web.proxyprotocol.insecure"
+        ports:
+            - 80:80
+        volumes: 
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        networks: 
+            - tiff_downloader
+
+    tiff_iipimages:
+        image: "bdlss/iipsrv-openjpeg-docker"
+        container_name: "iipimages"
+        restart: unless-stopped
+        volumes:
+            - tiff_files:/var/www/localhost/images
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.tiff_iipimages.rule=Host(`${URL}`) && PathPrefix (`/fcgi-bin/`)
+            - traefik.http.services.tiff_iipimages.loadbalancer.server.port=80
+            - traefik.http.routers.tiff_iipimages.entrypoints=web
+            - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH
+            - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolalloworigin=origin-list-or-null
+            - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolmaxage=100
+            - traefik.http.middlewares.tiff_iipimages.headers.addvaryheader=true
+        networks: 
+            - tiff_downloader
+
     tiff_downloader:
-        image: "registry.gitlab.whiteaster.com/openforestdata/backend/tiff-downloader:master"
+        build: 
+            context: .
+            dockerfile: Dockerfile
         container_name: tiff_downloader
         restart: unless-stopped
         environment: 
             - READ_DOT_ENV=True
-        ports:
-            - 8000:8000
         volumes:
-            - /home/dev/ttif:/app/pyramid_tiff
+            - tiff_files:/app/pyramid_tiff
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.tiff_downloader.rule=Host(`${URL}`)
+            - traefik.http.services.tiff_downloader.loadbalancer.server.port=8000
+            - traefik.http.routers.tiff_downloader.entrypoints=web
+            - traefik.http.middlewares.tiff_downloader.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH
+            - traefik.http.middlewares.tiff_downloader.headers.accesscontrolalloworigin=origin-list-or-null
+            - traefik.http.middlewares.tiff_downloader.headers.accesscontrolmaxage=100
+            - traefik.http.middlewares.tiff_downloader.headers.addvaryheader=true
         networks: 
             - tiff_downloader
+
+volumes: 
+    tiff_files:
 
 networks: 
     tiff_downloader:
