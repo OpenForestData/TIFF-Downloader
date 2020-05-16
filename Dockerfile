@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.8-alpine
 
 WORKDIR /app
 EXPOSE 8000
@@ -6,11 +6,11 @@ EXPOSE 8000
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update \
-    && apt-get install -y \
-    libvips \
-    libvips-dev \
-    libvips-tools
+RUN apk update && \
+    apk add vips \
+    vips-dev \
+    build-base && \
+    rm -rf /var/cache/apk/*
 
 COPY requirements.txt /app
 RUN pip install -r requirements.txt

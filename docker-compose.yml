@@ -20,7 +20,7 @@ services:
             - tiff_downloader
 
     tiff_iipimages:
-        image: "bdlss/iipsrv-openjpeg-docker"
+        image: "registry.gitlab.whiteaster.com/openforestdata/backend/iipimageserver-with-openjpg:master"
         container_name: "iipimages"
         restart: unless-stopped
         volumes:
