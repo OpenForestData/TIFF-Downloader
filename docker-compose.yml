@@ -10,10 +10,20 @@ services:
             - "--providers.docker.exposedbydefault=true"
             - "--api.insecure=true"
             - "--entrypoints.web.address=:80"
+            - "--entrypoints.web-secure.address=:443"
             - "--entrypoints.web.forwardedheaders.insecure"
             - "--entrypoints.web.proxyprotocol.insecure"
+            - "--certificatesresolvers.letsencrypt.acme.email=admin@whiteaster.com"
+            - "--certificatesresolvers.letsencrypt.acme.storage=/acme.json"
+            - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+        labels:
+        - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+        - "traefik.http.routers.http-catchall.entrypoints=web"
+        - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         ports:
             - 80:80
+            - 443:443
         volumes: 
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
         networks: 
@@ -29,11 +39,13 @@ services:
             - traefik.enable=true
             - traefik.http.routers.tiff_iipimages.rule=Host(`${URL}`) && PathPrefix (`/fcgi-bin/`)
             - traefik.http.services.tiff_iipimages.loadbalancer.server.port=80
-            - traefik.http.routers.tiff_iipimages.entrypoints=web
+            - traefik.http.routers.tiff_iipimages.entrypoints=web-secure
             - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH
             - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolalloworigin=origin-list-or-null
             - traefik.http.middlewares.tiff_iipimages.headers.accesscontrolmaxage=100
             - traefik.http.middlewares.tiff_iipimages.headers.addvaryheader=true
+            - traefik.http.routers.tiff_iipimages.tls=true
+            - traefik.http.routers.tiff_iipimages.tls.certresolver=letsencrypt
         networks: 
             - tiff_downloader
 
@@ -51,11 +63,13 @@ services:
             - traefik.enable=true
             - traefik.http.routers.tiff_downloader.rule=Host(`${URL}`)
             - traefik.http.services.tiff_downloader.loadbalancer.server.port=8000
-            - traefik.http.routers.tiff_downloader.entrypoints=web
+            - traefik.http.routers.tiff_downloader.entrypoints=web-secure
             - traefik.http.middlewares.tiff_downloader.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH
             - traefik.http.middlewares.tiff_downloader.headers.accesscontrolalloworigin=origin-list-or-null
             - traefik.http.middlewares.tiff_downloader.headers.accesscontrolmaxage=100
             - traefik.http.middlewares.tiff_downloader.headers.addvaryheader=true
+            - traefik.http.routers.tiff_downloader.tls=true
+            - traefik.http.routers.tiff_downloader.tls.certresolver=letsencrypt
         networks: 
             - tiff_downloader
 
