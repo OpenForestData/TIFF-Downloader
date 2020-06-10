@@ -1,6 +1,6 @@
 falcon==2.0.0
 gunicorn==20.0.4
-pyDataverse==0.2.1
+pyDatavers@ git+https://gitlab.whiteaster.com/public_data/pydataverse-upgrade.git
 python-dotenv==0.13.0
 pyvips==2.1.12
 requests==2.23.0
